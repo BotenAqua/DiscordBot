@@ -29,8 +29,15 @@ async def on_raw_reaction_add(payload):
 		if payload.emoji.name in reaction_dict[payload.message_id]:
 			member = payload.member
 			await member.add_roles(discord.utils.get(member.guild.roles, name='Testowa'))
-		#else:
-			#TODO: remove reaction?
+		else:
+			channel = client.get_channel(payload.channel_id)
+			message = await channel.fetch_message(payload.message_id)
+			user = client.get_user(payload.user_id)
+			if payload.emoji.id:
+				emoji = client.get_emoji(payload.emoji.id)
+			else:
+				emoji = payload.emoji
+			await message.remove_reaction(emoji, user)
 	return
 
 @client.event
