@@ -1,6 +1,7 @@
 import discord
 import os
 from dotenv import load_dotenv
+import yaml
 
 load_dotenv()
 
@@ -12,7 +13,8 @@ intents.members = True
 
 client = discord.Client(intents=intents)
 
-reaction_dict = {963461119681388624:{}}
+with open('roles.yaml') as roles:
+	reaction_dict = yaml.safe_load(roles)
 
 @client.event
 async def on_ready():
@@ -24,15 +26,19 @@ async def on_ready():
 @client.event
 async def on_raw_reaction_add(payload):
 	if payload.message_id in reaction_dict:
-		member = payload.member
-		await member.add_roles(discord.utils.get(member.guild.roles, name='Testowa'))
+		if payload.emoji.name in reaction_dict[payload.message_id]:
+			member = payload.member
+			await member.add_roles(discord.utils.get(member.guild.roles, name='Testowa'))
+		#else:
+			#TODO: remove reaction?
 	return
 
 @client.event
 async def on_raw_reaction_remove(payload):
 	if payload.message_id in reaction_dict:
-		member = client.get_guild(payload.guild_id).get_member(payload.user_id)
-		await member.remove_roles(discord.utils.get(member.guild.roles, name='Testowa'))
-	return
+		if payload.emoji.name in reaction_dict[payload.message_id]:
+			member = client.get_guild(payload.guild_id).get_member(payload.user_id)
+			await member.remove_roles(discord.utils.get(member.guild.roles, name='Testowa'))
+
 
 client.run(token)
