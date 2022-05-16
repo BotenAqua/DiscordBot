@@ -33,7 +33,7 @@ async def on_raw_reaction_add(payload):
 	if payload.message_id in reaction_dict:
 		if payload.emoji.name in reaction_dict[payload.message_id]:
 			member = payload.member
-			await member.add_roles(discord.utils.get(member.guild.roles, name='Testowa'))
+			await member.add_roles(discord.utils.get(member.guild.roles, name=reaction_dict[payload.message_id][payload.emoji.name]))
 		else:
 			channel = client.get_channel(payload.channel_id)
 			message = await channel.fetch_message(payload.message_id)
@@ -50,7 +50,7 @@ async def on_raw_reaction_remove(payload):
 	if payload.message_id in reaction_dict:
 		if payload.emoji.name in reaction_dict[payload.message_id]:
 			member = client.get_guild(payload.guild_id).get_member(payload.user_id)
-			await member.remove_roles(discord.utils.get(member.guild.roles, name='Testowa'))
+			await member.remove_roles(discord.utils.get(member.guild.roles, name=reaction_dict[payload.message_id][payload.emoji.name]))
 
 
 client.run(token)
