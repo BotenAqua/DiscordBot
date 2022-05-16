@@ -5,7 +5,12 @@ import yaml
 
 load_dotenv()
 
-token = os.getenv('TOKEN')
+if os.getenv('ENV') == 'Prod':
+	token = os.getenv('PROD_TOKEN')
+	print('Prod')
+else:
+	token = os.getenv('TEST_TOKEN')
+	print('Test')
 
 intents = discord.Intents.default()
 intents.members = True
